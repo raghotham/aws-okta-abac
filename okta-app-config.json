@@ -1,0 +1,45 @@
+{
+  "settings": {
+    "app": {
+      "instanceType": "aws",
+      "awsEnvironmentType": "aws.amazon",
+      "identityProviderArn": "${aws_iam_saml_provider.okta.arn}",
+      "groupFilter": ".*",
+      "roleValuePattern": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/${aws:PrincipalTag/Team}-${aws:PrincipalTag/Environment}",
+      "sessionDuration": 3600,
+      "signOnURL": "https://signin.aws.amazon.com/saml",
+      "audienceURI": "urn:amazon:webservices"
+    },
+    "signOn": {
+      "defaultRelayState": "",
+      "ssoAcsUrl": "https://signin.aws.amazon.com/saml",
+      "recipient": "https://signin.aws.amazon.com/saml",
+      "destination": "https://signin.aws.amazon.com/saml",
+      "audience": "urn:amazon:webservices",
+      "idpIssuer": "http://www.okta.com/${OKTA_ORG_ID}",
+      "attributes": {
+        "https://aws.amazon.com/SAML/Attributes/Role": {
+          "nameFormat": "urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
+          "type": "GROUP",
+          "filterType": "REGEX",
+          "filterValue": ".*"
+        },
+        "https://aws.amazon.com/SAML/Attributes/RoleSessionName": {
+          "nameFormat": "urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
+          "type": "USER_ID"
+        },
+        "Team": {
+          "nameFormat": "urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
+          "type": "GROUP",
+          "filterType": "EQUALS",
+          "filterValue": "${okta.user.group}"
+        },
+        "Environment": {
+          "nameFormat": "urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
+          "type": "EXPRESSION",
+          "filterValue": "user.environment"
+        }
+      }
+    }
+  }
+}
